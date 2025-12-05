@@ -1,10 +1,10 @@
+import "../css/MovieCard.css";
 function MovieCart({movie}){
     function onFavouriteClick(){
         alert('Favourite Button Clicked')
     }
 
-    return(
-        <div className="movie-cart">
+    return<div className="movie-card">
             <div className="movie-poster">
                 <img src={movie.url} alt={movie.title} />
                 <div className="movie-overlay">
@@ -18,7 +18,7 @@ function MovieCart({movie}){
                 <p>{movie.release_date}</p>
             </div>
         </div>
-    );
+    
 }
 
 export default MovieCart
