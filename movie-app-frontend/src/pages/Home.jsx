@@ -1,18 +1,33 @@
 import MovieCart from "../components/MovieCard";
-import {useState} from "react";
+import {useState, useEffect} from "react";
+import {searchMovies, getPopularMovies} from "../services/api";
 import "../css/Home.css";
 function Home(){
     const[searchQuery,setSearchQuery] = useState("");
+    const[movies, setMovies]=useState([]);
+    const[error, setError]=useState(null);
+    const[loading, setLoading]=useState(true); //why true because right when we loading this component, we are going to be loading data.
 
-    const movies=[
-        { id:'1', title:'Terminator', release_date:'2020'},
-        { id:'2', title:'Life of Pie', release_date:'2020'},
-        { id:'3', title:'The Matrix', release_date:'2020'},
-    ]
+    useEffect(() => {
+        const loadPopularMovies = async() => {
+            try{
+                const popularMovies = await getPopularMovies()
+                setMovies(popularMovies)
+            }
+            catch(err){
+                console.log(err)
+                setError("Failed to load movies...")
+            }
+            finally{
+                setLoading(false)//so no-longer loading
+            }
+        }
+        loadPopularMovies()
+    }, []);
 
     const handleSearch= (e) => {
         e.preventDefault()//It means that it prevent default behaviour which when submit button cick it will refresh page.
-        alert(searchQuery)
+        if(!searchQuery.trim()) return
     }
 
     return(
@@ -29,12 +44,14 @@ function Home(){
                 </button>
             </form>
 
-
-            <div className="movies-grid">
+            {error && <div className="error-message">{error}</div>}
+            { loading ? (<div className="loading">Loading....</div>
+            ) : (
+                <div className="movies-grid">
                 {movies.map((movie) => movie.title.toLowerCase().startsWith(searchQuery.toLowerCase()) &&
                 (<MovieCart movie={movie} key={movie.id} />)
                 )}
-            </div>
+            </div>)}
         </div>
     );
 }
